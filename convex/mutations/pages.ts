@@ -119,3 +119,27 @@ export const publish = mutation({
   },
 });
 
+export const unpublish = mutation({
+  args: { id: v.id("pages") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    const page = await ctx.db.get(args.id);
+    if (!page) throw new Error("Page not found");
+
+    const site = await ctx.db.get(page.siteId);
+    if (!site || site.tenantId !== user.tenantId) {
+      throw new Error("Page not found or access denied");
+    }
+
+    await ctx.db.patch(args.id, {
+      publishedAt: undefined,
+      updatedAt: Date.now(),
+    });
+  },
+});
+

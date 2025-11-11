@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/api";
-import TemplateRenderer from "../../shared/components/TemplateRenderer";
+import { BuilderRenderer } from "../components/BuilderRenderer";
 import ComponentPalette from "../sidebar/ComponentPalette";
 import PropertyPanel from "../sidebar/PropertyPanel";
 import { Save, Eye, Undo2, Redo2 } from "lucide-react";
@@ -37,6 +37,7 @@ export default function BuilderCanvas() {
     selectComponent,
     addComponent,
     updateComponent,
+    reorderComponent,
     undo,
     redo,
     canUndo,
@@ -178,9 +179,18 @@ export default function BuilderCanvas() {
             </button>
           </div>
         </div>
-        <div className="flex-1 overflow-auto p-8">
+        <div className="flex-1 overflow-auto p-8 pl-16">
           <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
-            <TemplateRenderer schema={templateData} data={{}} />
+            <BuilderRenderer
+              schema={templateData}
+              onReorder={(oldIndex, newIndex) => {
+                const componentId = templateData.components[oldIndex].id;
+                reorderComponent(componentId, newIndex);
+                toast.success("Component reordered");
+              }}
+              onSelectComponent={selectComponent}
+              selectedComponentId={selectedComponentId}
+            />
           </div>
         </div>
       </div>

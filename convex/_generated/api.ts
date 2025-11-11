@@ -27,6 +27,8 @@ export const api = {
     },
     tenants: {
       getCurrent: {} as any,
+      getByDomain: {} as any,
+      getBySlug: {} as any,
     },
   },
   mutations: {
@@ -42,6 +44,7 @@ export const api = {
       update: {} as any,
       remove: {} as any,
       publish: {} as any,
+      unpublish: {} as any,
     },
     media: {
       upload: {} as any,

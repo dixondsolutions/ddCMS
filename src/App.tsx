@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthKitProvider } from "@workos-inc/authkit-react";
 import { ConvexProvider } from "./lib/convex";
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "react-hot-toast";
 import AdminLayout from "./admin/AdminLayout";
 import Dashboard from "./admin/dashboard/Dashboard";
@@ -20,12 +21,13 @@ if (!authkitClientId) {
 
 function App() {
   return (
-    <AuthKitProvider
-      clientId={authkitClientId || ""}
-      redirectUri={window.location.origin}
-    >
-      <ConvexProvider>
-        <Toaster
+    <HelmetProvider>
+      <AuthKitProvider
+        clientId={authkitClientId || ""}
+        redirectUri={window.location.origin}
+      >
+        <ConvexProvider>
+          <Toaster
           position="top-right"
           toastOptions={{
             duration: 4000,
@@ -65,8 +67,9 @@ function App() {
             <Route path="/*" element={<PublicSite />} />
           </Routes>
         </BrowserRouter>
-      </ConvexProvider>
-    </AuthKitProvider>
+        </ConvexProvider>
+      </AuthKitProvider>
+    </HelmetProvider>
   );
 }
 
