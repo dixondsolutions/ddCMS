@@ -1,10 +1,11 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { FileText, Plus } from "lucide-react";
 
 export default function PageEditor() {
   const { siteId } = useParams<{ siteId: string }>();
+  const navigate = useNavigate();
   const site = useQuery(
     api.queries.sites.getById,
     siteId ? { id: siteId as any } : "skip"
@@ -37,7 +38,7 @@ export default function PageEditor() {
         templateData: {},
       });
       // Navigate to editor
-      window.location.href = `/admin/sites/${siteId}/pages/${pageId}/edit`;
+      navigate(`/admin/sites/${siteId}/pages/${pageId}/edit`);
     } catch (error) {
       console.error("Failed to create page:", error);
     }

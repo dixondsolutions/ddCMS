@@ -10,4 +10,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Ensure Convex generated files are resolved correctly
+  optimizeDeps: {
+    exclude: ["convex"],
+  },
 });

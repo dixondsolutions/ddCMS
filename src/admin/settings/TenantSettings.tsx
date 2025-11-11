@@ -3,14 +3,12 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Save, Upload } from "lucide-react";
 import { applyBranding, injectCustomCSS } from "../../shared/utils/branding";
-import { useMutation as useConvexMutation } from "convex/react";
-import { api as convexApi } from "../../../convex/_generated/api";
 
 export default function TenantSettings() {
   const tenant = useQuery(api.queries.tenants.getCurrentTenant);
   const updateBranding = useMutation(api.mutations.tenants.updateBranding);
   const updateDomain = useMutation(api.mutations.tenants.updateCustomDomain);
-  const generateUploadUrl = useConvexMutation(convexApi.actions.fileUpload.generateUploadUrl);
+  const generateUploadUrl = useMutation(api.actions.fileUpload.generateUploadUrl);
   const [branding, setBranding] = useState({
     primaryColor: "",
     secondaryColor: "",

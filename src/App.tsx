@@ -9,6 +9,7 @@ import MediaLibrary from "./admin/media/MediaLibrary";
 import TenantSettings from "./admin/settings/TenantSettings";
 import TemplateSelector from "./admin/templates/TemplateSelector";
 import BuilderCanvas from "./builder/canvas/BuilderCanvas";
+import PreviewPage from "./preview/PreviewPage";
 import PublicSite from "./public/PublicSite";
 
 const authkitClientId = import.meta.env.VITE_WORKOS_CLIENT_ID;
