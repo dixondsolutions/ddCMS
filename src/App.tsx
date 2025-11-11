@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthKitProvider } from "@workos-inc/authkit-react";
 import { ConvexProvider } from "./lib/convex";
+import { Toaster } from "react-hot-toast";
 import AdminLayout from "./admin/AdminLayout";
 import Dashboard from "./admin/dashboard/Dashboard";
 import SiteList from "./admin/sites/SiteList";
@@ -24,6 +25,30 @@ function App() {
       redirectUri={window.location.origin}
     >
       <ConvexProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: "#363636",
+              color: "#fff",
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: "#10b981",
+                secondary: "#fff",
+              },
+            },
+            error: {
+              duration: 5000,
+              iconTheme: {
+                primary: "#ef4444",
+                secondary: "#fff",
+              },
+            },
+          }}
+        />
         <BrowserRouter>
           <Routes>
             <Route path="/admin" element={<AdminLayout />}>

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useDropzone } from "react-dropzone";
 import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/api";
 import { Upload, Image as ImageIcon, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function MediaLibrary() {
   const media = useQuery(api.queries.media.listForTenant);
@@ -30,8 +32,10 @@ export default function MediaLibrary() {
           size: file.size,
         });
       }
+      toast.success(`Successfully uploaded ${acceptedFiles.length} file(s)`);
     } catch (error) {
       console.error("Failed to upload file:", error);
+      toast.error("Failed to upload file. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -44,12 +48,14 @@ export default function MediaLibrary() {
     },
   });
 
-  const handleDelete = async (mediaId: string) => {
+  const handleDelete = async (mediaId: Id<"media">) => {
     if (confirm("Are you sure you want to delete this file?")) {
       try {
-        await deleteMedia({ id: mediaId as any });
+        await deleteMedia({ id: mediaId });
+        toast.success("File deleted successfully!");
       } catch (error) {
         console.error("Failed to delete file:", error);
+        toast.error("Failed to delete file. Please try again.");
       }
     }
   };

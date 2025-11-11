@@ -1,18 +1,20 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/api";
 import { FileText, Plus } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function PageEditor() {
   const { siteId } = useParams<{ siteId: string }>();
   const navigate = useNavigate();
   const site = useQuery(
     api.queries.sites.getById,
-    siteId ? { id: siteId as any } : "skip"
+    siteId ? { id: siteId as Id<"sites"> } : "skip"
   );
   const pages = useQuery(
     api.queries.pages.listForSite,
-    siteId ? { siteId: siteId as any } : "skip"
+    siteId ? { siteId: siteId as Id<"sites"> } : "skip"
   );
   const createPage = useMutation(api.mutations.pages.create);
 
@@ -31,16 +33,17 @@ export default function PageEditor() {
   const handleCreatePage = async () => {
     try {
       const pageId = await createPage({
-        siteId: siteId as any,
+        siteId: siteId as Id<"sites">,
         title: "New Page",
         slug: `page-${Date.now()}`,
         path: `/page-${Date.now()}`,
         templateData: {},
       });
-      // Navigate to editor
+      toast.success("Page created successfully!");
       navigate(`/admin/sites/${siteId}/pages/${pageId}/edit`);
     } catch (error) {
       console.error("Failed to create page:", error);
+      toast.error("Failed to create page. Please try again.");
     }
   };
 

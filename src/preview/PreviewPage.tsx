@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/api";
 import { useParams } from "react-router-dom";
 import TemplateRenderer from "../../shared/components/TemplateRenderer";
 import { ArrowLeft } from "lucide-react";
@@ -7,14 +8,14 @@ import { Link } from "react-router-dom";
 
 export default function PreviewPage() {
   const { siteId, pageId } = useParams<{ siteId: string; pageId: string }>();
-  
+
   const site = useQuery(
     api.queries.sites.getById,
-    siteId ? { id: siteId as any } : "skip"
+    siteId ? { id: siteId as Id<"sites"> } : "skip"
   );
   const page = useQuery(
     api.queries.pages.getById,
-    pageId ? { id: pageId as any } : "skip"
+    pageId ? { id: pageId as Id<"pages"> } : "skip"
   );
   const template = useQuery(
     api.queries.templates.getById,

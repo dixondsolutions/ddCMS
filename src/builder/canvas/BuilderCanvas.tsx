@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/api";
 import TemplateRenderer from "../../shared/components/TemplateRenderer";
 import ComponentPalette from "../sidebar/ComponentPalette";
 import PropertyPanel from "../sidebar/PropertyPanel";
@@ -13,11 +14,11 @@ export default function BuilderCanvas() {
   const navigate = useNavigate();
   const site = useQuery(
     api.queries.sites.getById,
-    siteId ? { id: siteId as any } : "skip"
+    siteId ? { id: siteId as Id<"sites"> } : "skip"
   );
   const page = useQuery(
     api.queries.pages.getById,
-    pageId ? { id: pageId as any } : "skip"
+    pageId ? { id: pageId as Id<"pages"> } : "skip"
   );
   const template = useQuery(
     api.queries.templates.getById,

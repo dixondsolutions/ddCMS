@@ -4,7 +4,6 @@ import { SignInButton, UserButton } from "@workos-inc/authkit-react";
 import {
   LayoutDashboard,
   Globe,
-  FileText,
   Image,
   Settings,
   Palette,
@@ -36,7 +35,6 @@ export default function AdminLayout() {
   const navigation = [
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Sites", href: "/admin/sites", icon: Globe },
-    { name: "Pages", href: "/admin/sites", icon: FileText },
     { name: "Media", href: "/admin/media", icon: Image },
     { name: "Templates", href: "/admin/templates", icon: Palette },
     { name: "Settings", href: "/admin/settings", icon: Settings },
