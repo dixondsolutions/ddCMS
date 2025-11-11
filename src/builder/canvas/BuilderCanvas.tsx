@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -6,8 +6,10 @@ import type { Id } from "../../../convex/_generated/api";
 import TemplateRenderer from "../../shared/components/TemplateRenderer";
 import ComponentPalette from "../sidebar/ComponentPalette";
 import PropertyPanel from "../sidebar/PropertyPanel";
-import { Save, Eye } from "lucide-react";
+import { Save, Eye, Undo2, Redo2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useBuilderStore } from "../BuilderStore";
+import toast from "react-hot-toast";
 
 export default function BuilderCanvas() {
   const { siteId, pageId } = useParams<{ siteId: string; pageId: string }>();
@@ -25,9 +27,52 @@ export default function BuilderCanvas() {
     site?.templateId ? { id: site.templateId } : "skip"
   );
   const updatePage = useMutation(api.mutations.pages.update);
-  const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
-  const [templateData, setTemplateData] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Use BuilderStore
+  const {
+    templateData,
+    selectedComponentId,
+    setTemplateData,
+    selectComponent,
+    addComponent,
+    updateComponent,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    reset,
+  } = useBuilderStore();
+
+  // Initialize template data when page loads
+  useEffect(() => {
+    if (page && template) {
+      const pageSchema = page.templateData || template.schema;
+      setTemplateData(pageSchema);
+    }
+    return () => {
+      reset(); // Clean up on unmount
+    };
+  }, [page, template, setTemplateData, reset]);
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if (
+        (e.ctrlKey || e.metaKey) &&
+        (e.key === "y" || (e.key === "z" && e.shiftKey))
+      ) {
+        e.preventDefault();
+        redo();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [undo, redo]);
 
   if (!siteId || !pageId) {
     return <div>Site ID and Page ID required</div>;
@@ -50,14 +95,18 @@ export default function BuilderCanvas() {
   }
 
   const handleSave = async () => {
+    if (!page || !templateData) return;
+
     setIsSaving(true);
     try {
       await updatePage({
         id: page._id,
-        templateData: templateData || page.templateData || template.schema,
+        templateData,
       });
+      toast.success("Page saved successfully!");
     } catch (error) {
       console.error("Failed to save page:", error);
+      toast.error("Failed to save page. Please try again.");
     } finally {
       setIsSaving(false);
     }
@@ -68,8 +117,13 @@ export default function BuilderCanvas() {
     navigate(`/admin/sites/${siteId}/pages/${pageId}/preview`);
   };
 
-  const pageSchema = page.templateData || template.schema;
-  const currentData = templateData || {};
+  if (!templateData) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -77,11 +131,8 @@ export default function BuilderCanvas() {
       <div className="w-64 bg-white border-r border-gray-200 overflow-y-auto">
         <ComponentPalette
           onSelectComponent={(component) => {
-            // Add component to template data
-            const newData = { ...currentData };
-            const componentId = `component-${Date.now()}`;
-            newData[componentId] = component;
-            setTemplateData(newData);
+            addComponent(component);
+            toast.success("Component added");
           }}
         />
       </div>
@@ -93,6 +144,23 @@ export default function BuilderCanvas() {
             {page.title}
           </h2>
           <div className="flex items-center space-x-2">
+            {/* Undo/Redo buttons */}
+            <button
+              onClick={undo}
+              disabled={!canUndo()}
+              className="flex items-center px-3 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo2 className="h-4 w-4" />
+            </button>
+            <button
+              onClick={redo}
+              disabled={!canRedo()}
+              className="flex items-center px-3 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Redo (Ctrl+Y)"
+            >
+              <Redo2 className="h-4 w-4" />
+            </button>
             <button
               onClick={handlePreview}
               className="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
@@ -112,7 +180,7 @@ export default function BuilderCanvas() {
         </div>
         <div className="flex-1 overflow-auto p-8">
           <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
-            <TemplateRenderer schema={pageSchema} data={currentData} />
+            <TemplateRenderer schema={templateData} data={{}} />
           </div>
         </div>
       </div>
@@ -120,15 +188,11 @@ export default function BuilderCanvas() {
       {/* Property Panel */}
       <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto">
         <PropertyPanel
-          selectedComponent={selectedComponent}
+          selectedComponent={selectedComponentId}
+          templateData={templateData}
           onUpdate={(updates) => {
-            if (selectedComponent) {
-              const newData = { ...currentData };
-              newData[selectedComponent] = {
-                ...newData[selectedComponent],
-                ...updates,
-              };
-              setTemplateData(newData);
+            if (selectedComponentId) {
+              updateComponent(selectedComponentId, updates);
             }
           }}
         />

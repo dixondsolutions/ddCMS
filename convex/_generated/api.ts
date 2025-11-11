@@ -53,7 +53,12 @@ export const api = {
     },
   },
   actions: {
-    // AI actions will be added here
+    seedTemplates: {
+      seed: {} as any,
+    },
+    fileUpload: {
+      generateUploadUrl: {} as any,
+    },
   },
 } as const;
 
