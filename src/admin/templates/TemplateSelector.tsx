@@ -1,9 +1,11 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/api";
 import { defaultTemplates } from "../../shared/types/template";
 import { useNavigate } from "react-router-dom";
 import { Palette, Check } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function TemplateSelector() {
   const navigate = useNavigate();
@@ -14,34 +16,36 @@ export default function TemplateSelector() {
 
   const handleSelectTemplate = async (templateId: string) => {
     if (isCreating) return;
-    
+
     setIsCreating(true);
     try {
       // Create site with selected template
       const siteId = await createSite({
         name: "New Site",
         slug: `site-${Date.now()}`,
-        templateId: templateId as any,
+        templateId: templateId as Id<"templates">,
       });
+      toast.success("Site created successfully!");
       navigate(`/admin/sites/${siteId}/pages`);
     } catch (error) {
       console.error("Failed to create site:", error);
+      toast.error("Failed to create site. Please try again.");
     } finally {
       setIsCreating(false);
     }
   };
 
   // For now, show default templates until we have templates in the database
-  const availableTemplates = templates && templates.length > 0 
-    ? templates 
+  const availableTemplates = templates && templates.length > 0
+    ? templates
     : defaultTemplates.map((t, i) => ({
-        _id: `default-${i}` as any,
+        _id: `default-${i}` as Id<"templates">,
         name: t.metadata?.name || "Template",
         category: t.metadata?.category || "General",
         schema: t,
         isPublic: true,
         createdAt: Date.now(),
-        createdBy: "" as any,
+        createdBy: "" as Id<"users">,
         previewImage: undefined,
       }));
 
