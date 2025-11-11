@@ -1,0 +1,285 @@
+# AI-Powered CMS Development Todo List
+# Agency Website Builder - Client Timeline: 1-2 Weeks
+# Tech Stack: React + TypeScript + Convex + WorkOS + Claude AI
+
+## 🚨 CRITICAL PRIORITY - Production Blockers (Days 1-3)
+# These MUST be completed before any client work can begin
+
+- [ ] Set up environment variables (.env file)
+  - Add VITE_CONVEX_URL
+  - Add VITE_WORKOS_CLIENT_ID
+  - Add CONVEX_DEPLOY_KEY for deployment
+  - Add ANTHROPIC_API_KEY for AI features
+  - Document all required env vars in README
+
+- [ ] Run Convex codegen to generate proper types
+  - Execute `npx convex dev` to generate types
+  - Fix /convex/_generated/api.ts placeholder
+  - Fix /convex/_generated/server.d.ts placeholder
+  - Verify all Convex queries/mutations have proper types
+
+- [ ] Fix template integration in SiteList.tsx
+  - Remove placeholder `templateId: "" as any` (line 22)
+  - Add proper template selection to CreateSiteDialog
+  - Connect template data to site creation mutation
+  - Ensure template schema is applied to new sites
+
+- [ ] Fix all TypeScript type assertions (`as any`)
+  - Replace siteId type assertions with proper Id<"sites">
+  - Replace pageId type assertions with proper Id<"pages">
+  - Replace templateId type assertions with proper Id<"templates">
+  - Enable strict type checking
+
+- [ ] Add basic error handling and user feedback
+  - Add error toast notifications (consider react-hot-toast)
+  - Add loading states to all async operations
+  - Add error boundaries around major components
+  - Add form validation before mutations
+
+- [ ] Fix navigation inconsistencies
+  - Fix Pages link in AdminLayout (currently goes to /admin/sites, should go to dedicated pages route)
+  - Add breadcrumb navigation for better UX
+  - Ensure all admin routes are properly defined
+
+
+## 🔥 HIGH PRIORITY - Core CMS Functionality (Days 4-7)
+# Complete these to make the CMS fully functional for clients
+
+- [ ] Complete PropertyPanel component functionality
+  - Load component properties from template data (remove placeholder at line 21)
+  - Implement property editing UI (text inputs, color pickers, image uploads)
+  - Connect property changes to templateData state
+  - Add real-time preview updates when properties change
+
+- [ ] Implement drag-and-drop in builder canvas
+  - Add react-dnd or dnd-kit library
+  - Make ComponentPalette items draggable
+  - Make BuilderCanvas droppable
+  - Support reordering existing components
+  - Add visual feedback during drag operations
+
+- [ ] Connect BuilderStore to BuilderCanvas
+  - Integrate undo/redo functionality
+  - Add component selection state
+  - Add keyboard shortcuts (Ctrl+Z, Ctrl+Y)
+  - Sync store state with component tree
+
+- [ ] Complete template seeding
+  - Finish convex/actions/seedTemplates.ts implementation
+  - Create 5-10 professional templates (landing, about, contact, services, portfolio)
+  - Add template categories (business, portfolio, blog, ecommerce)
+  - Add template preview images to schema
+
+- [ ] Fix public site rendering and routing
+  - Complete PublicSite.tsx domain detection (remove placeholder comments)
+  - Implement proper custom domain routing in convex/http.ts
+  - Return rendered HTML instead of JSON from HTTP router
+  - Add SEO meta tags to public pages using seo.ts utility
+  - Test subdomain and custom domain routing
+
+- [ ] Complete publishing workflow
+  - Add publish/unpublish UI in PageEditor
+  - Show draft vs published status clearly
+  - Add "View Live" button to preview published pages
+  - Ensure only published pages are visible on public site
+
+- [ ] Enhance MediaLibrary functionality
+  - Add image thumbnails/previews (not just icons)
+  - Add copy URL to clipboard button
+  - Add file size and type validation (max 10MB, images only)
+  - Add search/filter functionality
+  - Add pagination for large media libraries
+
+
+## 🤖 AI INTEGRATION - Agency Scaling Features (Days 8-10)
+# AI-powered features to help scale your agency operations
+
+- [ ] Set up Anthropic Claude API integration
+  - Install @anthropic-ai/sdk
+  - Create convex/actions/ai.ts for AI operations
+  - Add API key to environment variables
+  - Implement rate limiting and error handling
+
+- [ ] Implement AI content generation
+  - Add "Generate with AI" button to ContentSection component properties
+  - Create AI prompt for generating copy based on business description
+  - Generate headlines, paragraphs, CTAs automatically
+  - Allow users to refine/regenerate content
+  - Save generation history
+
+- [ ] Implement AI full page generation from prompts
+  - Add "Create Page with AI" dialog in PageEditor
+  - Accept natural language description (e.g., "Create a landing page for a yoga studio")
+  - Generate complete page structure with Hero, Content, CTA, Footer
+  - Populate with AI-generated content
+  - Allow editing after generation
+
+- [ ] Implement AI design assistance
+  - Add "Suggest Layout" feature to builder
+  - AI recommends component arrangements based on page type
+  - Generate color scheme suggestions based on brand/industry
+  - Suggest complementary fonts from branding options
+  - Add "Magic Improve" button to enhance existing designs
+
+- [ ] Create AI chat interface in builder
+  - Add floating chat widget in BuilderCanvas
+  - Allow conversational edits ("make the header blue", "add a contact form")
+  - Show AI suggestions proactively
+  - Implement streaming responses for better UX
+
+
+## ⚡ POLISH & PRODUCTION READY (Days 11-14)
+# Make the CMS production-ready and client-friendly
+
+- [ ] Add responsive preview modes
+  - Add desktop/tablet/mobile toggle in BuilderCanvas
+  - Preview components at different breakpoints
+  - Ensure all template components are mobile-responsive
+  - Test on real devices
+
+- [ ] Implement image optimization
+  - Add image compression on upload
+  - Generate multiple sizes/thumbnails
+  - Add lazy loading for images
+  - Integrate with Convex file storage properly
+
+- [ ] Create user management UI
+  - Add team management page in admin
+  - Implement invite user functionality
+  - Add role selection (admin/editor/viewer)
+  - Show user list with roles
+  - Implement role-based access control in UI
+
+- [ ] Build analytics dashboard
+  - Connect site analytics from schema to Dashboard
+  - Show page views, visitor stats (if integrated with analytics service)
+  - Add charts/graphs for visualization
+  - Add export functionality
+
+- [ ] Fix Dashboard statistics
+  - Calculate actual media count (currently hardcoded to 0 at line 32)
+  - Aggregate page counts across all sites
+  - Add last updated timestamps
+  - Add quick actions
+
+- [ ] Add comprehensive validation
+  - Validate slug uniqueness across sites
+  - Validate custom domain format
+  - Validate required fields before save
+  - Show clear validation error messages
+
+- [ ] Implement proper loading states
+  - Add skeleton loaders for content
+  - Add spinners for mutations
+  - Add optimistic updates where appropriate
+  - Prevent double-submission
+
+- [ ] Write basic tests
+  - Test critical paths (site creation, page creation, publishing)
+  - Test AI integrations
+  - Test authentication flows
+  - Test template rendering
+
+
+## 📋 FUTURE ENHANCEMENTS - Post-MVP (Backlog)
+# Nice-to-have features for future iterations
+
+- [ ] Version history UI
+  - Show page version timeline
+  - Compare versions side-by-side
+  - Restore previous versions
+  - Add version notes/comments
+
+- [ ] Custom template creation
+  - Allow users to save custom templates
+  - Template marketplace for sharing
+  - Export/import templates
+
+- [ ] Advanced AI features
+  - AI-powered SEO optimization
+  - AI image generation (DALL-E/Midjourney integration)
+  - AI brand voice consistency checker
+  - A/B testing suggestions
+
+- [ ] Bulk operations
+  - Bulk publish/unpublish pages
+  - Bulk delete media
+  - Duplicate sites/pages
+  - Import/export data
+
+- [ ] Advanced builder features
+  - Custom CSS per component
+  - Animation/transition controls
+  - Conditional visibility rules
+  - Dynamic data binding
+
+- [ ] Collaboration features
+  - Real-time collaborative editing
+  - Comments on pages/components
+  - Approval workflows
+  - Change notifications
+
+- [ ] Site search functionality
+  - Search across pages and sites
+  - Filter by status, template, date
+  - Save searches
+
+- [ ] Performance optimizations
+  - Code splitting for faster loads
+  - Image CDN integration
+  - Caching strategies
+  - Bundle size optimization
+
+- [ ] Documentation
+  - User guide for clients
+  - Video tutorials
+  - API documentation
+  - Developer setup guide
+
+
+## 🐛 KNOWN BUGS TO FIX
+# Issues discovered during codebase review
+
+- [ ] BuilderCanvas has data race condition
+  - Uses both local state and props for templateData
+  - Can cause conflicts between local changes and DB updates
+  - Refactor to single source of truth
+
+- [ ] Missing error messages in UI
+  - Most errors only go to console.error()
+  - Users don't see what went wrong
+  - Add user-facing error notifications
+
+- [ ] Media library shows no image previews
+  - Currently just shows file icon
+  - Should show actual image thumbnails
+  - Implement preview generation
+
+
+## 📝 NOTES & CONSIDERATIONS
+
+**AI API Costs:**
+- Monitor Anthropic API usage carefully
+- Implement caching for common requests
+- Add usage limits per tenant tier
+
+**Multi-Tenant Security:**
+- All queries must filter by tenant
+- Verify tenant isolation is enforced
+- Test cross-tenant access prevention
+
+**Performance:**
+- Watch for N+1 queries in Convex
+- Optimize media file sizes
+- Consider pagination early
+
+**Client Onboarding:**
+- Prepare demo templates ready to go
+- Create onboarding checklist
+- Set up support documentation
+
+**Deployment:**
+- Set up Convex production deployment
+- Configure WorkOS production environment
+- Set up custom domain DNS instructions
+- Create deployment checklist
